@@ -1,19 +1,18 @@
 package hello.core.singleton;
 
-import org.assertj.core.api.Assertions;
-import org.assertj.core.error.AssertionErrorMessagesAggregrator;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 class StatefulServiceTest {
 
     @Test
-    void statefulServiceSingleton(){
+    void statefulServiceSingleton() {
         ApplicationContext ac = new AnnotationConfigApplicationContext(TestConfig.class);
         StatefulService statefulService1 = ac.getBean("statefulService", StatefulService.class);
         StatefulService statefulService2 = ac.getBean("statefulService", StatefulService.class);
@@ -26,14 +25,14 @@ class StatefulServiceTest {
         //Theread A: 사용자A 주문 금액 조회
         int price = statefulService1.getPrice();
         //Theread A: 사용자A는 10000원을 기대했지만, 기대와 다르게 20000원 출력
-        System.out.println("price = "+price);
+        log.info(String.format("price = %s", price));
 
         assertThat(statefulService1.getPrice()).isEqualTo(20000);
     }
 
-    static class TestConfig{
+    static class TestConfig {
         @Bean
-        public StatefulService statefulService(){
+        public StatefulService statefulService() {
             return new StatefulService();
         }
     }
