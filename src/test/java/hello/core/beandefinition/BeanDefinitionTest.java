@@ -2,30 +2,35 @@ package hello.core.beandefinition;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 
 import hello.core.AppConfig;
 
-public class BeanDefinitionTest {
-    
-    AnnotationConfigApplicationContext ac
-    = new AnnotationConfigApplicationContext(AppConfig.class);
+import java.util.Arrays;
 
-    // GenericXmlApplicationContext ac
-    //  = new GenericXmlApplicationContext("appConfig.xml");
+public class BeanDefinitionTest {
+
+    AnnotationConfigApplicationContext ac
+            = new AnnotationConfigApplicationContext(AppConfig.class);
+
+//     GenericXmlApplicationContext ac
+//      = new GenericXmlApplicationContext("appConfig.xml");
+
+    Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     @Test
     @DisplayName("빈 설정 메타정보 확인")
-    void findApplicationBean(){
+    void findApplicationBean() {
         String[] beanDefinitionNames = ac.getBeanDefinitionNames();
-        for (String beanDefinitionName : beanDefinitionNames) {
-            BeanDefinition beanDefinition = ac.getBeanDefinition(beanDefinitionName);
-            if (beanDefinition.getRole() == BeanDefinition.ROLE_APPLICATION){
-                System.out.println("beanDefinitionName "+ beanDefinitionName +
-                    " beanDefinition = "+ beanDefinition);
-            }
-        }
+
+        Arrays.stream(beanDefinitionNames)
+                .filter(name -> ac.getBeanDefinition(name)
+                        .getRole() == BeanDefinition.ROLE_APPLICATION)
+                .forEach(name -> logger.info(
+                        String.format("beanDefinitionName: %s; beanDefinition: %s",
+                                name, ac.getBeanDefinition(name))));
     }
 }
